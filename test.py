@@ -20,6 +20,7 @@ from dataset import MongolianOCRDataset
 from model import HandwrittenMongolianModel
 from engine import eval_fn
 import Levenshtein as lev
+from PIL import Image
 
 # label encoder
 targets_file = os.path.join(os.path.join(DATA_DIR, "Trainset_label.txt"))
@@ -75,6 +76,15 @@ for vp in valid_preds:
     valid_text_preds.extend(current_preds)
 corrected_preds = [correct_text(text, all_words) for text in valid_text_preds]
 valid_text_preds = corrected_preds
+
+# show first 5 predictions
+for i in range(5):
+    data = test_dataset[i]
+    image = data['images'][0]
+    #  show image from tensor
+    image = Image.fromarray(image.numpy())
+    image.show()
+    print(f'Prediction: {valid_text_preds[i]}, target: {targets_orig[i]}')
 
 # Calculate accuracy
 accuracy = metrics.accuracy_score(targets_orig, valid_text_preds)
